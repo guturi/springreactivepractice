@@ -29,7 +29,9 @@ public class ItemsRouter {
                 return RouterFunctions.route(GET(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1).and(accept(MediaType.APPLICATION_JSON)), itemsHandler::getAllItems)
                         .andRoute(GET(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1+"/{id}").and(accept(MediaType.APPLICATION_JSON)), itemsHandler::getOneItem)
                         .andRoute(POST(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1).and(accept(MediaType.APPLICATION_JSON)), itemsHandler::createItem)
-                        .andRoute(DELETE(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1+"/{id}").and(accept(MediaType.APPLICATION_JSON)), itemsHandler::deleteItem);
+                        .andRoute(DELETE(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1+"/{id}").and(accept(MediaType.APPLICATION_JSON)), itemsHandler::deleteItem)
+                        .andRoute(PUT(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1+"/{id}").and(accept(MediaType.APPLICATION_JSON)), itemsHandler::updateItem);
+
 
     }
 }

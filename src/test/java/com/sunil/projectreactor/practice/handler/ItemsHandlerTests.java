@@ -188,4 +188,67 @@ public class ItemsHandlerTests {
                 .expectBody(Void.class);
     }
 
+    @Test
+    public void updateItem(){
+        final Item toBeUpdatedItem = new Item("ABCD", "Bose headphones new version ", 599.99);
+
+//        webTestClient.put()
+//                .uri(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1.concat("/{id}"), "ABCD")
+//                .accept(MediaType.APPLICATION_JSON)
+//                .body(Mono.just(toBeUpdatedItem), Item.class)
+//                .exchange()
+//                .expectStatus().isOk()
+//                .expectBody(Item.class)
+//                .consumeWith(itemEntityExchangeResult -> {
+//                    Item updatedItem = itemEntityExchangeResult.getResponseBody();
+//                    assert updatedItem != null;
+//                    assertEquals(updatedItem.getPrice(), 599.99);
+//                    assertEquals(updatedItem.getDescription(), "Bose headphones new version ");
+//                    assertNotNull(updatedItem.getId());
+//                });
+
+//        webTestClient.put()
+//                .uri(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1.concat("/{id}"), "ABCD")
+//                .accept(MediaType.APPLICATION_JSON)
+//                .body(Mono.just(toBeUpdatedItem), Item.class)
+//                .exchange()
+//                .expectStatus().isOk()
+//                .expectBody()
+//                .jsonPath("$.price").isEqualTo(599.99)
+//                .jsonPath("$.description").isEqualTo("Bose headphones new version ");
+
+
+        Flux<Item> updatedItemFlux = webTestClient.put()
+                .uri(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1.concat("/{id}"), "ABCD")
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Mono.just(toBeUpdatedItem), Item.class)
+                .exchange()
+                .expectStatus().isOk()
+                .returnResult(Item.class)
+                .getResponseBody();
+
+        StepVerifier.create(updatedItemFlux)
+                .expectSubscription()
+                .consumeNextWith(updatedItem -> {
+                    assert updatedItem != null;
+                    assertEquals(updatedItem.getPrice(), 599.99);
+                    assertEquals(updatedItem.getDescription(), "Bose headphones new version ");
+                    assertNotNull(updatedItem.getId());
+                });
+    }
+
+    @Test
+    public void updatedItem_NotFound(){
+
+        final Item toBeUpdatedItem = new Item("ABCD", "Bose headphones new version ", 599.99);
+
+        webTestClient.put()
+                .uri(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1.concat("/{id}"), "ABCDEF")
+                .accept(MediaType.APPLICATION_JSON)
+                .body(Mono.just(toBeUpdatedItem), Item.class)
+                .exchange()
+                .expectStatus().isNotFound();
+
+    }
+
 }
