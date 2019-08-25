@@ -15,9 +15,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static junit.framework.TestCase.assertNotNull;
+
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -27,10 +31,10 @@ import java.util.List;
 public class ItemControllerTest {
 
     @Autowired
-    WebTestClient webTestClient;
+    private WebTestClient webTestClient;
 
     @Autowired
-    ItemReactiveRepository itemReactiveRepository;
+    private ItemReactiveRepository itemReactiveRepository;
 
     @Before
     public void setUp(){
@@ -44,9 +48,7 @@ public class ItemControllerTest {
         itemReactiveRepository.deleteAll()
                 .thenMany(Flux.fromIterable(items))
                 .flatMap(itemReactiveRepository::save)
-                .doOnNext(item -> {
-                    System.out.println("inserted Item is " + item);
-                })
+                .doOnNext(item -> System.out.println("inserted Item is " + item))
                 .blockLast();
 
     }
@@ -61,5 +63,39 @@ public class ItemControllerTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Item.class)
                 .hasSize(5);
+    }
+
+    @Test
+    public void getAllItemsApproach2(){
+
+        webTestClient.get()
+                .uri(ItemConstants.ITEM_ENDPOINT_V1)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBodyList(Item.class)
+                .consumeWith(listEntityExchangeResult -> {
+                    List<Item> responseBody = listEntityExchangeResult.getResponseBody();
+                    assert responseBody != null;
+                    responseBody.forEach(item -> assertNotNull(item.getId()));
+                })
+                .hasSize(5);
+    }
+
+    @Test
+    public void getAllItemsApproach3(){
+
+        Flux<Item> itemsFlux = webTestClient.get()
+                .uri(ItemConstants.ITEM_ENDPOINT_V1)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .returnResult(Item.class)
+                .getResponseBody();
+
+        StepVerifier.create(itemsFlux.log("value from network : "))
+                .expectSubscription()
+                .expectNextCount(5)
+                .verifyComplete();
     }
 }
