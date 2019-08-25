@@ -178,4 +178,14 @@ public class ItemsHandlerTests {
 
     }
 
+    @Test
+    public void deleteItem(){
+        webTestClient.delete()
+                .uri(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1.concat("/{id}"), "ABCD")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Void.class);
+    }
+
 }
