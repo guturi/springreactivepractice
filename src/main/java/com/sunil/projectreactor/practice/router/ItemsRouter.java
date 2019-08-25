@@ -7,9 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.*;
 
-
-import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
-import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
+import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 
 @Configuration
 public class ItemsRouter {
@@ -29,7 +27,8 @@ public class ItemsRouter {
 //                });
 
                 return RouterFunctions.route(GET(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1).and(accept(MediaType.APPLICATION_JSON)), itemsHandler::getAllItems)
-                        .andRoute(GET(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1+"/{id}").and(accept(MediaType.APPLICATION_JSON)), itemsHandler::getOneItem);
+                        .andRoute(GET(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1+"/{id}").and(accept(MediaType.APPLICATION_JSON)), itemsHandler::getOneItem)
+                        .andRoute(POST(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1).and(accept(MediaType.APPLICATION_JSON)), itemsHandler::createItem);
 
     }
 }

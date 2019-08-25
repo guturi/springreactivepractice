@@ -60,4 +60,11 @@ public class ItemsHandler {
                 .body(fromObject(item1)))
                 .switchIfEmpty(ServerResponse.notFound().build());
     }
+
+    public Mono<ServerResponse> createItem(ServerRequest serverRequest){
+        Mono<Item> itemMono = serverRequest.bodyToMono(Item.class);
+
+        return itemMono.flatMap(item -> ServerResponse.ok()
+                .body(itemReactiveRepository.save(item), Item.class));
+    }
 }
