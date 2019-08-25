@@ -98,4 +98,44 @@ public class ItemControllerTest {
                 .expectNextCount(5)
                 .verifyComplete();
     }
+
+    @Test
+    public void getItem(){
+
+        webTestClient.get()
+                .uri(ItemConstants.ITEM_ENDPOINT_V1.concat("/{id}"), "ABCD")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.price", 499.9);
+
+//        webTestClient.get()
+//                .uri(ItemConstants.ITEM_ENDPOINT_V1.concat("/{id}"), "ABCD")
+//                .exchange()
+//                .expectBody(Item.class)
+//                .consumeWith(itemEntityExchangeResult -> {
+//                    Item responseBody = itemEntityExchangeResult.getResponseBody();
+//                    assertEquals(responseBody.getPrice(), 499.9);
+//                });
+
+//        Flux<Item> itemFlux = webTestClient.get()
+//                .uri(ItemConstants.ITEM_ENDPOINT_V1.concat("/{id}"), "ABCD")
+//                .exchange()
+//                .returnResult(Item.class)
+//                .getResponseBody();
+//
+//        StepVerifier.create(itemFlux)
+//                .expectSubscription()
+//                .expectNextCount(1l)
+//                .verifyComplete();
+    }
+
+    @Test
+    public void getItem_NotFound(){
+
+        webTestClient.get()
+                .uri(ItemConstants.ITEM_ENDPOINT_V1.concat("/{id}"), "ABCDE")
+                .exchange()
+                .expectStatus().isNotFound();
+    }
 }
