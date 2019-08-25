@@ -156,4 +156,14 @@ public class ItemControllerTest {
                 .jsonPath("$.description").isEqualTo("iphone X")
                 .jsonPath("$.price").isEqualTo(999.99);
     }
+
+    @Test
+    public void deleteItem(){
+        webTestClient.delete()
+                .uri(ItemConstants.ITEM_ENDPOINT_V1.concat("/{id}"), "ABCD")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Void.class);
+    }
 }

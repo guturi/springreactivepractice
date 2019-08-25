@@ -42,4 +42,10 @@ public class ItemController {
 
         return itemReactiveRepository.save(item);
     }
+
+    @DeleteMapping(ITEM_ENDPOINT_V1+"/{id}")
+    public Mono<Void> deleteItem(@PathVariable String id ){
+
+        return itemReactiveRepository.deleteById(id);
+    }
 }
