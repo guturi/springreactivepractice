@@ -13,19 +13,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
-import reactor.test.StepVerifier;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertNull;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
