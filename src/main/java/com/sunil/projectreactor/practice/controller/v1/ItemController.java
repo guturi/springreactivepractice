@@ -5,7 +5,6 @@ import com.sunil.projectreactor.practice.document.Item;
 import com.sunil.projectreactor.practice.repository.ItemReactiveRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.cdi.Eager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,5 +46,17 @@ public class ItemController {
     public Mono<Void> deleteItem(@PathVariable String id ){
 
         return itemReactiveRepository.deleteById(id);
+    }
+
+    @PutMapping(ITEM_ENDPOINT_V1+"/{id}")
+    public Mono<ResponseEntity<Item>> updateItem(@PathVariable String id, @RequestBody Item item){
+
+        return itemReactiveRepository.findById(id)
+                .flatMap(currentItem -> {
+                    currentItem.setPrice(item.getPrice());
+                    currentItem.setDescription(item.getDescription());
+                    return itemReactiveRepository.save(currentItem); })
+                .map(updatedItem -> new ResponseEntity<>(updatedItem, HttpStatus.OK))
+                .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
