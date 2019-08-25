@@ -15,11 +15,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.*;
+
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -85,6 +87,49 @@ public class ItemsHandlerTests {
             System.out.println("Emitting item");
             assertNotNull(item.getId());
         });
+    }
+
+    @Test
+    public void getOneItem(){
+
+//        webTestClient.get()
+//                .uri(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1.concat("/{id}"), "ABCD")
+//                .accept(MediaType.APPLICATION_JSON)
+//                .exchange()
+//                .expectBody(Item.class)
+//                .consumeWith(itemEntityExchangeResult -> {
+//                    Item item1 = itemEntityExchangeResult.getResponseBody();
+//                    assert item1 != null;
+//                    assertEquals(item1.getPrice(), 499.9);
+//                });
+//
+//        webTestClient.get()
+//                .uri(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1.concat("/{id}"), "ABCD")
+//                .accept(MediaType.APPLICATION_JSON)
+//                .exchange()
+//                .expectBody()
+//                .jsonPath("$.price", 499.99);
+
+        Flux<Item> itemFlux = webTestClient.get()
+                .uri(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1.concat("/{id}"), "ABCD")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .returnResult(Item.class)
+                .getResponseBody();
+
+        StepVerifier.create(itemFlux)
+                .expectSubscription()
+                .expectNext(new Item("ABCD", "Bose headphones ", 499.9))
+                .verifyComplete();
+    }
+
+    @Test
+    public void getOneItem_NotFound(){
+        webTestClient.get()
+                .uri(ItemConstants.ITEM_FUNCTIONAL_ENDPOINT_V1.concat("/{id}"), "ABCDEF")
+                .exchange()
+                .expectStatus().isNotFound();
+
     }
 
 }

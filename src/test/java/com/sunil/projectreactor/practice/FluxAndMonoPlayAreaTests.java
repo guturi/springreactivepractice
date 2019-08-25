@@ -17,5 +17,21 @@ public class FluxAndMonoPlayAreaTests {
                 .expectNext("A", "B")
                 .verifyComplete();
 
+//        Flux<Flux<String>> just = Flux.just(stringFlux);
+//
+//        Flux<String> stringFlux1 = just.flatMap(i -> {
+//            return i
+//        });
+
+//        Flux<String> map = stringFlux.map(i -> {
+//            return i;
+//        });
+//
+//        stringFlux.flatMap(i -> {
+//
+//            return Flux.just(i);
+//        });
+//                .
+
     }
 }
